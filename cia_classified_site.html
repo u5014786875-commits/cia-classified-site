@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CIA // ACCESS RESTRICTED</title>
+<style>
+:root{--neon:#0affea;--bg:#000;--muted:#066}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--neon);font-family:Courier,monospace}
+.container{max-width:1000px;margin:40px auto;padding:20px}
+.header{padding:40px 20px;text-align:center;border-bottom:2px solid rgba(10,255,234,0.2)}
+.h1{font-size:2.2rem;letter-spacing:4px;text-transform:uppercase}
+.scanline{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent 2px,rgba(10,255,234,0.02) 3px)}
+.block{border:1px solid rgba(10,255,234,0.25);padding:18px;margin:20px 0;background:#021111;border-radius:6px;box-shadow:0 0 16px rgba(10,255,234,0.06)}
+.title{color:var(--neon);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.warning{color:#ff0033;font-weight:700}
+.code{background:#001414;padding:10px;border-left:3px solid var(--neon);margin:10px 0;color:var(--neon);display:inline-block}
+.nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.btn{padding:8px 12px;border:1px solid rgba(10,255,234,0.12);cursor:pointer;background:transparent;color:var(--neon);border-radius:4px}
+.footer{text-align:center;padding:20px;color:var(--muted);font-size:0.85rem;margin-top:40px}
+.term{background:#000;border:1px solid rgba(255,255,255,0.02);padding:12px;height:260px;overflow:auto;font-size:0.9rem}
+.input{width:100%;padding:10px;margin-top:8px;background:#001515;border:1px solid rgba(10,255,234,0.06);color:var(--neon)}
+.hidden{display:none}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-weight:700;letter-spacing:2px}
+.auth{font-size:0.9rem}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center}
+.loginbox{background:#071313;padding:18px;border:1px solid rgba(10,255,234,0.08);width:360px;border-radius:6px}
+.label{display:block;margin-bottom:6px;color:var(--muted);font-size:0.85rem}
+input[type=text],input[type=password]{width:100%;padding:10px;margin-bottom:10px;background:#001515;border:1px solid rgba(10,255,234,0.04);color:var(--neon)}
+.login-actions{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.small{font-size:0.8rem;color:var(--muted)}
+.bad{color:#ff3344}
+.ok{color:#66ffb3}
+.linklike{color:var(--neon);text-decoration:underline;cursor:pointer}
+@media(max-width:600px){.container{margin:20px;padding:12px}}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<header class="header container topbar">
+  <div class="logo">\\[ CLASSIFIED ACCESS // CIA - DIVISION ANORMALE \\]</div>
+  <div class="auth small">Session: <span id="accessLevel">NONE</span></div>
+</header>
+
+<main class="container">
+  <div class="block">
+    <div class="title">Statut d'Accès</div>
+    <p class="warning">⚠ Niveau d'Accès Requis : <strong>ONYX-5 PRIME</strong></p>
+    <p>Toute tentative non autorisée sera consignée dans le système <strong>RED-RAVEN</strong>.</p>
+    <div class="code">AUTH-CODE : <strong>BLK-77/SECTOR-VOID</strong></div>
+    <div style="margin-top:12px">
+      <button class="btn" id="openLogin">S'authentifier (Simulé)</button>
+      <button class="btn" id="demoGuest">Accès Démo</button>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="title">Navigation Rapide</div>
+    <div class="nav">
+      <button class="btn" data-section="protocols">Protocoles</button>
+      <button class="btn" data-section="units">Unités</button>
+      <button class="btn" data-section="archives">Archives</button>
+      <button class="btn" data-section="terminal">Terminal</button>
+      <button class="btn" id="downloadBtn">Télécharger le Rapport (HTML)</button>
+    </div>
+  </div>
+
+  <section id="protocols" class="block hidden">
+    <div class="title">Derniers Protocoles Déclassifiés</div>
+    <ul>
+      <li>PROTOCOL OMEGA-SEAL · Voile Mondial : Préservation Absolue</li>
+      <li>GHOST-LINE · Déploiement Conditionnel : Classe Rouge</li>
+      <li>SPECTRE · Contre-Mémétique / Filtre Cognitif Série-S</li>
+      <li>BLACK-VAULT · Containment Niveau 7 · Phénomènes Ontologiques</li>
+    </ul>
+  </section>
+
+  <section id="units" class="block hidden">
+    <div class="title">Unités Opérationnelles (sélection)</div>
+    <ul>
+      <li>GHOST-LINE · GL-7 — Unité d'assistance clandestine</li>
+      <li>FORCE-D · FOS-1 — Interventions spéciales</li>
+      <li>SHIELD-CRO · Contre-Renseignement Occulte</li>
+      <li>ANALY-CORE · Analyse Anormale</li>
+    </ul>
+  </section>
+
+  <section id="archives" class="block hidden">
+    <div class="title">Accès aux Archives</div>
+    <p>Sélectionnez une catégorie ci-dessous :</p>
+    <ul>
+      <li>▶ Dossiers Anormaux</li>
+      <li>▶ Unités Opérationnelles</li>
+      <li>▶ Protocoles Internes</li>
+      <li>▶ Communications Cryptées</li>
+    </ul>
+    <p class="warning">Note : Certaines sections nécessitent un accès <strong>NO-FILE</strong>.</p>
+  </section>
+
+  <section id="terminal" class="block hidden">
+    <div class="title">Terminal (Simulé)</div>
+    <div class="term" id="terminalOutput">
+      <div>> Connexion initialisée...</div>
+      <div>> Listening RED-RAVEN logs...</div>
+    </div>
+    <input class="input" id="terminalInput" placeholder="Entrez une commande (help pour la liste)">
+    <div class="small" style="margin-top:8px">Commandes : <span class="linklike" onclick="runCmd('help')">help</span>, <span class="linklike" onclick="runCmd('list protocols')">list protocols</span>, <span class="linklike" onclick="runCmd('whoami')">whoami</span></div>
+  </section>
+
+</main>
+
+<footer class="footer container">
+  © 2025 CIA — Division Anormale (Fiction RP). Tout accès est surveillé.
+</footer>
+
+<!-- Login overlay -->
+<div id="loginOverlay" class="overlay hidden">
+  <div class="loginbox">
+    <div class="title">Authentification</div>
+    <label class="label">Code d'Accès</label>
+    <input id="codeField" type="text" placeholder="Entrez le code (ex: ONYX-5 PRIME)">
+    <label class="label">Passphrase</label>
+    <input id="passField" type="password" placeholder="Passphrase">
+    <div style="margin-top:8px" class="login-actions">
+      <div class="small">Authentification simulée — Ne pas utiliser en prod</div>
+      <div>
+        <button class="btn" id="loginBtn">Valider</button>
+        <button class="btn" id="cancelBtn">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Simple front-end logic (entièrement simulé pour RP)
+const openLogin = document.getElementById('openLogin');
+const loginOverlay = document.getElementById('loginOverlay');
+const cancelBtn = document.getElementById('cancelBtn');
+const loginBtn = document.getElementById('loginBtn');
+const accessLevel = document.getElementById('accessLevel');
+const demoGuest = document.getElementById('demoGuest');
+const downloadBtn = document.getElementById('downloadBtn');
+
+openLogin.addEventListener('click',()=>{loginOverlay.classList.remove('hidden')});
+cancelBtn.addEventListener('click',()=>{loginOverlay.classList.add('hidden')});
+loginBtn.addEventListener('click',()=>{
+  const code = document.getElementById('codeField').value.trim().toUpperCase();
+  const pass = document.getElementById('passField').value.trim();
+  if(!code){alert('Code requis');return;}
+  // Simulate clearance levels
+  if(code.includes('ONYX') || pass==='prime'){
+    accessLevel.textContent = 'ONYX-5 PRIME';
+    alert('Authentification acceptée — Niveau ONYX-5 PRIME (Simulé)');
+  } else if(code.includes('NO-FILE')|| pass==='ghost'){
+    accessLevel.textContent = 'NO-FILE ACCESS';
+    alert('Authentification acceptée — NO-FILE (Simulé)');
+  } else {
+    accessLevel.textContent = 'CLEAR-2 (Démo)';
+    alert('Authentification démo — accès limité');
+  }
+  loginOverlay.classList.add('hidden');
+});
+
+demoGuest.addEventListener('click',()=>{
+  accessLevel.textContent = 'DEMO-GUEST';
+  alert('Accès Démo activé');
+});
+
+// Navigation
+document.querySelectorAll('[data-section]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const s = btn.getAttribute('data-section');
+    document.querySelectorAll('section').forEach(sec=>sec.classList.add('hidden'));
+    const el = document.getElementById(s);
+    if(el) el.classList.remove('hidden');
+  });
+});
+
+// Terminal simulation
+const termOut = document.getElementById('terminalOutput');
+const termIn = document.getElementById('terminalInput');
+function appendLine(text){const d=document.createElement('div');d.textContent='> '+text;termOut.appendChild(d);termOut.scrollTop=termOut.scrollHeight;}
+function runCmd(cmd){
+  cmd = cmd.trim().toLowerCase();
+  appendLine(cmd);
+  if(cmd==='help') appendLine('Commands: help, whoami, list protocols, list units, clear');
+  else if(cmd==='whoami') appendLine('user: demo_operator (clear: ' + accessLevel.textContent + ')');
+  else if(cmd==='list protocols') appendLine('protocols: OMEGA-SEAL, SPECTRE, BLACK-VAULT, GHOST-LINE');
+  else if(cmd==='list units') appendLine('units: GHOST-LINE, FOS-1, ANALY-CORE, SHIELD-CRO');
+  else if(cmd==='clear'){termOut.innerHTML=''; appendLine('console cleared');}
+  else appendLine('commande non reconnue');
+}
+termIn.addEventListener('keydown',e=>{if(e.key==='Enter'){runCmd(termIn.value);termIn.value='';}});
+
+// Download current page as HTML
+downloadBtn.addEventListener('click',()=>{
+  const html = '<!doctype html>\\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html],{type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'cia_classified_site.html'; document.body.appendChild(a); a.click(); a.remove();
+});
+
+// Small startup messages
+setTimeout(()=>{appendLine('Système : Interface prête.');appendLine('Système : Tapez help pour la liste de commandes.')},500);
+</script>
+</body>
+</html>
